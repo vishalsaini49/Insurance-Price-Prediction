@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Insurance Premium Prediction</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; background-color: #f4f4f4; }
+            .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px gray; }
+            h2, h3 { color: #007bff; }
+            .section { margin-bottom: 20px; padding: 15px; border-radius: 5px; background: #e9ecef; }
+            label { font-weight: bold; }
+            select, input { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+            button { background-color: #007bff; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+            button:hover { background-color: #0056b3; }
+            .error { color: red; font-size: 14px; }
+            .result { margin-top: 20px; font-size: 20px; font-weight: bold; color: green; text-align: center; }
+            .medical-history {display: flex; gap: 20px;}
+            .column {flex: 1; display: flex; flex-direction: column; gap: 10px;}
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h2 style="text-align: center;">Insurance Premium Price Prediction</h2>
+            <form id="predictionForm" method="POST" onsubmit="return validateForm()">
+
+                <!-- Demographic Details Section -->
+                <div class="section">
+                    <h3>Demographic Details</h3>
+                    <label>Age (yrs):</label>
+                    <input type="number" id="age" name="age" min="18" max="66" placeholder="Enter age between 18 to 66"
+                        required>
+                    <span class="error" id="ageError"></span>
+
+                    <label>Height (cm):</label>
+                    <input type="number" id="height" name="height" min="145" max="188"
+                        placeholder="Enter height between 145 to 188" required>
+                    <span class="error" id="heightError"></span>
+
+                    <label>Weight (kg):</label>
+                    <input type="number" id="weight" name="weight" min="51" max="132"
+                        placeholder="Enter weight between 51 to 132" required>
+                    <span class="error" id="weightError"></span>
+                </div>
+
+                <!-- Medical History Section -->
+                <div class="section">
+                    <h3>Medical History</h3>
+                    <div class="medical-history">
+                        <div class="column">
+                            <label>Number of Major Surgeries:</label>
+                            <select name="num_surgeries" required>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+
+                            <label>Diabetes:</label>
+                            <select name="diabetes" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+
+                            <label>Blood Pressure Problems:</label>
+                            <select name="bp_problems" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+
+                            <label>Any Transplants:</label>
+                            <select name="transplants" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <div class="column">
+                            <label>Any Chronic Diseases:</label>
+                            <select name="chronic_diseases" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+
+                            <label>Known Allergies:</label>
+                            <select name="allergies" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+
+                            <label>Family History of Cancer:</label>
+                            <select name="cancer_history" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit">Predict Premium Price</button>
+            </form>
+
+            {% if prediction is not none %}
+            <p class="result">Estimated Premium Price: ₹{{ "%.2f"|format(prediction) }}</p>
+            {% endif %}
+        </div>
+
+        <script>
+            function validateForm() {
+                let isValid = true;
+
+                // Get form fields
+                let age = document.getElementById("age").value;
+                let height = document.getElementById("height").value;
+                let weight = document.getElementById("weight").value;
+
+                // Get error span elements
+                let ageError = document.getElementById("ageError");
+                let heightError = document.getElementById("heightError");
+                let weightError = document.getElementById("weightError");
+
+                // Reset errors
+                ageError.innerText = "";
+                heightError.innerText = "";
+                weightError.innerText = "";
+
+                // Validate Age
+                if (age < 18 || age > 66) {
+                    ageError.innerText = "Age must be between 18 and 66.";
+                    isValid = false;
+                }
+
+                // Validate Height
+                if (height < 145 || height > 188) {
+                    heightError.innerText = "Height must be between 145 and 188 cm.";
+                    isValid = false;
+                }
+
+                // Validate Weight
+                if (weight < 51 || weight > 132) {
+                    weightError.innerText = "Weight must be between 51 and 132 kg.";
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+        </script>
+    </body>
+</html>
