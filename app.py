@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import pickle
 import numpy as np
 import pandas as pd
@@ -16,6 +16,52 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return render_template('home.html')
+
+@app.route("/prediction", methods=['POST'])
+def prediction():
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+        print(data)
+        
+        # Extract input data from JSON
+        age = data['age']
+        height = data['height']
+        weight = data['weight']
+        num_surgeries = data['num_surgeries']
+        diabetes = data['diabetes']
+        bp_problems = data['bp_problems']
+        transplants = data['transplants']
+        chronic_diseases = data['chronic_diseases']
+        allergies = data['allergies']
+        cancer_history = data['cancer_history']
+
+        # Create input DataFrame
+        input_data = pd.DataFrame({
+            "Age": [age],
+            "Diabetes": [diabetes],
+            "BloodPressureProblems": [bp_problems],
+            "AnyTransplants": [transplants],
+            "AnyChronicDiseases": [chronic_diseases],
+            "Height": [height],
+            "Weight": [weight],
+            "KnownAllergies": [allergies],
+            "HistoryOfCancerInFamily": [cancer_history],
+            "NumberOfMajorSurgeries": [num_surgeries]
+        })
+
+        # Apply standard scaling to numerical features
+        num_features = ["Age", "Height", "Weight"]
+        input_data[num_features] = scaler.transform(input_data[num_features])
+
+        # Predict Premium Price
+        prediction = model.predict(input_data)[0]
+
+        # Return the prediction as JSON
+        return jsonify({"prediction": prediction})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
